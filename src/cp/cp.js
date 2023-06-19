@@ -1,6 +1,20 @@
+import { fork } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
 const spawnChildProcess = async (args) => {
-    // Write your code here
+    const childProcess = fork(path.join(__dirname, 'files', 'script.js'), args, { silent: true });
+
+    process.stdin.pipe(childProcess.stdin);
+    childProcess.stdout.pipe(process.stdout);
+
+    childProcess.stdout.on('data', (value) => console.log(`There is text from child: ${value}`));
+
 };
 
 // Put your arguments in function call to test this functionality
-spawnChildProcess( /* [someArgument1, someArgument2, ...] */);
+spawnChildProcess([1, 2, 3]);
